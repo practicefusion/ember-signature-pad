@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     newStroke: 1,
     continueStroke: 0,
 
-    canvasContext: Ember.computed('canvasSelector', function() {
+    canvasContext: Ember.computed('canvasSelector', function () {
         if (this.$()) {
             var canvasSelector = this.get('canvasSelector'),
                 signaturePad = this.$(canvasSelector).get(0);
@@ -28,7 +28,7 @@ export default Ember.Component.extend({
         }
     }),
 
-    onDidInsertElement: Ember.on('didInsertElement', function() {
+    onDidInsertElement: Ember.on('didInsertElement', function () {
         this.get('canvasContext').strokeStyle = this.get('color');
         this.get('canvasContext').lineWidth = this.get('weight');
         // add events
@@ -36,34 +36,35 @@ export default Ember.Component.extend({
         this.$().on('mousemove touchmove', this.penMove.bind(this));
         this.$().on('mouseup touchend', this.penUp.bind(this));
 
-        if (Ember.isPresent(this.get('value'))) {
-            this.get('value').forEach(function(point) {
-                if (point[0] === 1) {
-                    this.get('canvasContext').beginPath();
-                    this.get('canvasContext').moveTo(point[1], point[2]);
-                } else {
-                    this.get('canvasContext').lineTo(point[1], point[2]);
-                    this.get('canvasContext').stroke();
-                }
-            }.bind(this));
-        }
+        this.draw();
     }),
 
-    savePenStroke: function(isNewStroke) {
-        var value = this.get('value');
-        value.pushObject([isNewStroke, this.get('pos').x, this.get('pos').y]);
+    onPenStyleChange: Ember.observer('color', 'weight', function () {
+        this.get('canvasContext').strokeStyle = this.get('color');
+        this.get('canvasContext').lineWidth = this.get('weight');
+    }),
+
+    savePenStroke: function (isNewStroke) {
+        let value = this.get('value'),
+            penStroke = [isNewStroke, this.get('pos').x, this.get('pos').y];
+        if (isNewStroke) {
+            penStroke.push(this.get('color'), this.get('weight'));
+        }
+        value.pushObject(penStroke);
     },
 
-    penDown: function(event) {
+    penDown: function (event) {
         this.set('penstate', true);
         this.set('pos', this.newEvent(event).penPosition());
+        this.get('canvasContext').strokeStyle = this.get('color');
+        this.get('canvasContext').lineWidth = this.get('weight');
         this.get('canvasContext').beginPath();
         this.get('canvasContext').moveTo(this.pos.x, this.pos.y);
         this.savePenStroke(this.get('newStroke'));
         return false; // return false to prevent IE selecting the image
     },
 
-    penMove: function(event) {
+    penMove: function (event) {
         var newPos = this.newEvent(event).penPosition();
         if (this.get('penstate')) {
             this.set('pos', newPos);
@@ -76,7 +77,7 @@ export default Ember.Component.extend({
         return false;
     },
 
-    penUp: function() {
+    penUp: function () {
         this.set('penstate', false);
         return false;
     },
@@ -85,14 +86,14 @@ export default Ember.Component.extend({
         var signaturePad = this.$('canvas');
 
         return {
-            crossPlatform: function() {
+            crossPlatform: function () {
                 // mobile safari
                 if (event.originalEvent && event.originalEvent.touches) {
                     return event.originalEvent.touches[0];
                 }
                 return event;
             }(),
-            penPosition: function() {
+            penPosition: function () {
                 var offset = signaturePad.offset(),
                     x = this.crossPlatform.pageX - offset.left,
                     y = this.crossPlatform.pageY - offset.top;
@@ -105,13 +106,30 @@ export default Ember.Component.extend({
         };
     },
 
-    valueObserver: Ember.observer('value', function() {
-        if (Ember.isEmpty(this.get('value')) && this.$()) {
-            this.get('canvasContext').clearRect(0, 0, 500, 500);
+    draw: function() {
+        if (Ember.isPresent(this.get('value'))) {
+            this.get('value').forEach((point) => {
+                if (point[0] === 1) {
+                    this.get('canvasContext').strokeStyle = point[3];
+                    this.get('canvasContext').lineWidth = point[4];
+                    this.get('canvasContext').beginPath();
+                    this.get('canvasContext').moveTo(point[1], point[2]);
+                } else {
+                    this.get('canvasContext').lineTo(point[1], point[2]);
+                    this.get('canvasContext').stroke();
+                }
+            });
+        }
+    },
+
+    valueObserver: Ember.observer('value', function () {
+        if (this.$()) {
+            this.get('canvasContext').clearRect(0, 0, this.get('width'), this.get('height'));
+            this.draw();
         }
     }),
 
-    onWillDestroyElement: Ember.on('willDestroyElement', function() {
+    onWillDestroyElement: Ember.on('willDestroyElement', function () {
         // remove events
         this.$().off();
     })
