@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-    color: '#008', // blue
+    color: '#0000ff', // blue
     weight: 1,
     height: 68,
     width: 386,
@@ -44,7 +44,7 @@ export default Ember.Component.extend({
         this.get('canvasContext').lineWidth = this.get('weight');
     }),
 
-    savePenStroke: function (isNewStroke) {
+    savePenStroke(isNewStroke) {
         let value = this.get('value'),
             penStroke = [isNewStroke, this.get('pos').x, this.get('pos').y];
         if (isNewStroke) {
@@ -53,7 +53,7 @@ export default Ember.Component.extend({
         value.pushObject(penStroke);
     },
 
-    penDown: function (event) {
+    penDown(event) {
         this.set('penstate', true);
         this.set('pos', this.newEvent(event).penPosition());
         this.get('canvasContext').strokeStyle = this.get('color');
@@ -64,7 +64,7 @@ export default Ember.Component.extend({
         return false; // return false to prevent IE selecting the image
     },
 
-    penMove: function (event) {
+    penMove(event) {
         var newPos = this.newEvent(event).penPosition();
         if (this.get('penstate')) {
             this.set('pos', newPos);
@@ -77,12 +77,12 @@ export default Ember.Component.extend({
         return false;
     },
 
-    penUp: function () {
+    penUp() {
         this.set('penstate', false);
         return false;
     },
 
-    newEvent: function(event) {
+    newEvent(event) {
         var signaturePad = this.$('canvas');
 
         return {
@@ -106,7 +106,7 @@ export default Ember.Component.extend({
         };
     },
 
-    draw: function() {
+    draw() {
         if (Ember.isPresent(this.get('value'))) {
             this.get('value').forEach((point) => {
                 if (point[0] === 1) {
