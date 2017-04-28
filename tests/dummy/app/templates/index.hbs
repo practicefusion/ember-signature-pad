@@ -1,5 +1,12 @@
 {{signature-pad
+    color=color
+    weight=weight
     value=signature
+    height=height
+    width=width
 }}
+{{input type="color" value=color}}
+{{input type="number" value=weight}}
 <button {{action "reset"}}>Reset</button>
+<button {{action "undo"}}>Undo</button>
 <div><code>{{stringifiedSignature}}</code></div>
