@@ -29,10 +29,10 @@ This is an ember-cli addon component that allows for users to draw their own sig
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-    color: '#008',  // default
-    height: 68,     // default
-    weight: 1,      // default
-    width: 386,     // default
+    color: '#0000ff',
+    height: 68,
+    weight: 1,
+    width: 386,
     signature: Ember.computed(function () {
         return Ember.A();
     }),
@@ -40,8 +40,17 @@ export default Ember.Controller.extend({
         return JSON.stringify(this.get('signature'));
     }),
     actions: {
-        reset: function() {
+        reset() {
             this.set('signature', Ember.A());
+        },
+        undo() {
+            let lastNewLine;
+            this.get('signature').forEach((item, index) => {
+                if (item[0] === 1) {
+                    lastNewLine = index;
+                }
+            });
+            this.set('signature', Ember.A(this.get('signature').slice(0, lastNewLine)));
         }
     }
 });
@@ -51,12 +60,15 @@ export default Ember.Controller.extend({
 ```handlebars
 {{signature-pad
     color=color
-    height=height
-    value=signature
     weight=weight
+    value=signature
+    height=height
     width=width
 }}
+{{input type="color" value=color}}
+{{input type="number" value=weight}}
 <button {{action "reset"}}>Reset</button>
+<button {{action "undo"}}>Undo</button>
 <div><code>{{stringifiedSignature}}</code></div>
 ```
 
