@@ -6,14 +6,12 @@
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Matthew Bennett <info@mtbennett.biz>",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
   "repository": "https://github.com/practicefusion/ember-signature-pad",
-  "author": "Matthew Bennett <info@mtbennett.biz>",
-  "license": "MIT",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
