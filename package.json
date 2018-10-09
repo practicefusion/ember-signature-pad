@@ -1,6 +1,6 @@
 {
   "name": "ember-signature-pad",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Ember-cli addon component that allows for users to draw their own signature in a canvas element.",
   "keywords": [
     "ember-addon"
