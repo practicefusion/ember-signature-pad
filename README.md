@@ -6,14 +6,8 @@ Installation
 ------------------------------------------------------------------------------
 
 ```
-ember install my-addon
+ember install ember-signature-pad
 ```
-
-
-Usage
-------------------------------------------------------------------------------
-
-[Longer description of how to use the addon in apps.]
 
 
 Contributing
@@ -22,7 +16,7 @@ Contributing
 ### Installation
 
 * `git clone https://github.com/practicefusion/ember-signature-pad.git`
-* `cd my-addon`
+* `cd ember-signature-pad`
 * `npm install`
 
 ### Linting
