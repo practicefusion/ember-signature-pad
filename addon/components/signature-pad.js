@@ -1,13 +1,17 @@
-import Ember from 'ember';
+import { isPresent } from '@ember/utils';
+import { on } from '@ember/object/evented';
+import { A } from '@ember/array';
+import { computed, observer } from '@ember/object';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
     color: '#0000ff', // blue
     weight: 1,
     height: 68,
     width: 386,
     // collection of penstrokes to submit
-    value: Ember.computed(function () {
-        return Ember.A();
+    value: computed(function () {
+        return A();
     }),
 
     canvasSelector: 'canvas',
@@ -18,7 +22,7 @@ export default Ember.Component.extend({
     newStroke: 1,
     continueStroke: 0,
 
-    canvasContext: Ember.computed('canvasSelector', function () {
+    canvasContext: computed('canvasSelector', function () {
         if (this.$()) {
             var canvasSelector = this.get('canvasSelector'),
                 signaturePad = this.$(canvasSelector).get(0);
@@ -28,7 +32,7 @@ export default Ember.Component.extend({
         }
     }),
 
-    onDidInsertElement: Ember.on('didInsertElement', function () {
+    onDidInsertElement: on('didInsertElement', function () {
         this.get('canvasContext').strokeStyle = this.get('color');
         this.get('canvasContext').lineWidth = this.get('weight');
         // add events
@@ -39,7 +43,7 @@ export default Ember.Component.extend({
         this.draw();
     }),
 
-    onPenStyleChange: Ember.observer('color', 'weight', function () {
+    onPenStyleChange: observer('color', 'weight', function () {
         this.get('canvasContext').strokeStyle = this.get('color');
         this.get('canvasContext').lineWidth = this.get('weight');
     }),
@@ -107,7 +111,7 @@ export default Ember.Component.extend({
     },
 
     draw() {
-        if (Ember.isPresent(this.get('value'))) {
+        if (isPresent(this.get('value'))) {
             this.get('value').forEach((point) => {
                 if (point[0] === 1) {
                     this.get('canvasContext').strokeStyle = point[3];
@@ -122,14 +126,14 @@ export default Ember.Component.extend({
         }
     },
 
-    valueObserver: Ember.observer('value', function () {
+    valueObserver: observer('value', function () {
         if (this.$()) {
             this.get('canvasContext').clearRect(0, 0, this.get('width'), this.get('height'));
             this.draw();
         }
     }),
 
-    onWillDestroyElement: Ember.on('willDestroyElement', function () {
+    onWillDestroyElement: on('willDestroyElement', function () {
         // remove events
         this.$().off();
     })

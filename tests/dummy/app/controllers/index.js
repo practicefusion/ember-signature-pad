@@ -1,19 +1,21 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
     color: '#0000ff',
     height: 68,
     weight: 1,
     width: 386,
-    signature: Ember.computed(function () {
-        return Ember.A();
+    signature: computed(function () {
+        return A();
     }),
-    stringifiedSignature: Ember.computed('signature.[]', function() {
+    stringifiedSignature: computed('signature.[]', function() {
         return JSON.stringify(this.get('signature'));
     }),
     actions: {
         reset() {
-            this.set('signature', Ember.A());
+            this.set('signature', A());
         },
         undo() {
             let lastNewLine;
@@ -22,7 +24,7 @@ export default Ember.Controller.extend({
                     lastNewLine = index;
                 }
             });
-            this.set('signature', Ember.A(this.get('signature').slice(0, lastNewLine)));
+            this.set('signature', A(this.get('signature').slice(0, lastNewLine)));
         }
     }
 });
