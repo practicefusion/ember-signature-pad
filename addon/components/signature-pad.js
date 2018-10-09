@@ -1,5 +1,4 @@
 import { isPresent } from '@ember/utils';
-import { on } from '@ember/object/evented';
 import { A } from '@ember/array';
 import { computed, observer } from '@ember/object';
 import Component from '@ember/component';
@@ -32,7 +31,7 @@ export default Component.extend({
         }
     }),
 
-    onDidInsertElement: on('didInsertElement', function () {
+    didInsertElement() {
         this.get('canvasContext').strokeStyle = this.get('color');
         this.get('canvasContext').lineWidth = this.get('weight');
         // add events
@@ -41,7 +40,7 @@ export default Component.extend({
         this.$().on('mouseup touchend', this.penUp.bind(this));
 
         this.draw();
-    }),
+    },
 
     onPenStyleChange: observer('color', 'weight', function () {
         this.get('canvasContext').strokeStyle = this.get('color');
@@ -133,8 +132,8 @@ export default Component.extend({
         }
     }),
 
-    onWillDestroyElement: on('willDestroyElement', function () {
+    willDestroyElement() {
         // remove events
         this.$().off();
-    })
+    }
 });
