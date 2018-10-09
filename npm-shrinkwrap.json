@@ -8378,7 +8378,7 @@
       "requires": {
         "inflight": "1.0.6",
         "inherits": "2.0.3",
-        "minimatch": "2.0.10",
+        "minimatch": "3.0.4",
         "once": "1.4.0",
         "path-is-absolute": "1.0.1"
       }
@@ -10036,9 +10036,9 @@
       "dev": true
     },
     "minimatch": {
-      "version": "2.0.10",
-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-2.0.10.tgz",
-      "integrity": "sha1-jQh8OcazjAAbl/ynzm0OHoCvusc=",
+      "version": "3.0.4",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz",
+      "integrity": "sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==",
       "requires": {
         "brace-expansion": "1.1.11"
       }
