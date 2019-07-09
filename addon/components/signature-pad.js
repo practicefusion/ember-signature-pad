@@ -22,9 +22,9 @@ export default Component.extend({
     continueStroke: 0,
 
     canvasContext: computed('canvasSelector', function () {
-        if (this.$()) {
+        if (this.element) {
             var canvasSelector = this.get('canvasSelector'),
-                signaturePad = this.$(canvasSelector).get(0);
+                signaturePad = this.element.querySelector(canvasSelector);
             return signaturePad.getContext('2d');
         } else {
             return null;
@@ -34,10 +34,6 @@ export default Component.extend({
     didInsertElement() {
         this.get('canvasContext').strokeStyle = this.get('color');
         this.get('canvasContext').lineWidth = this.get('weight');
-        // add events
-        this.$().on('mousedown touchstart', this.penDown.bind(this));
-        this.$().on('mousemove touchmove', this.penMove.bind(this));
-        this.$().on('mouseup touchend', this.penUp.bind(this));
 
         this.draw();
     },
@@ -86,7 +82,7 @@ export default Component.extend({
     },
 
     newEvent(event) {
-        var signaturePad = this.$('canvas');
+        var signaturePad = this.element.querySelector('canvas');
 
         return {
             crossPlatform: function () {
@@ -97,14 +93,15 @@ export default Component.extend({
                 return event;
             }(),
             penPosition: function () {
-                var offset = signaturePad.offset(),
-                    x = this.crossPlatform.pageX - offset.left,
-                    y = this.crossPlatform.pageY - offset.top;
-
-                return {
-                    x: x,
-                    y: y
+                let rect = signaturePad.getBoundingClientRect();
+                let offset = {
+                  top: rect.top + document.body.scrollTop,
+                  left: rect.left + document.body.scrollLeft
                 };
+                let x = this.crossPlatform.pageX - offset.left;
+                let y = this.crossPlatform.pageY - offset.top;
+
+                return { x, y };
             }
         };
     },
@@ -126,14 +123,9 @@ export default Component.extend({
     },
 
     valueObserver: observer('value', function () {
-        if (this.$()) {
+        if (this.element) {
             this.get('canvasContext').clearRect(0, 0, this.get('width'), this.get('height'));
             this.draw();
         }
     }),
-
-    willDestroyElement() {
-        // remove events
-        this.$().off();
-    }
 });
