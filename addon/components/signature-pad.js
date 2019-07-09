@@ -13,34 +13,26 @@ export default Component.extend({
         return A();
     }),
 
-    canvasSelector: 'canvas',
-    classNames: ['signature-pad'],
+    canvasElement: null,
     penstate: false,  // is the pen down?
     pos: null,   // {x: int, y: int} last pen position
 
     newStroke: 1,
     continueStroke: 0,
 
-    canvasContext: computed('canvasSelector', function () {
-        if (this.element) {
-            var canvasSelector = this.get('canvasSelector'),
-                signaturePad = this.element.querySelector(canvasSelector);
-            return signaturePad.getContext('2d');
-        } else {
-            return null;
-        }
-    }),
+    tagName: '',
 
-    didInsertElement() {
-        this.get('canvasContext').strokeStyle = this.get('color');
-        this.get('canvasContext').lineWidth = this.get('weight');
+    get canvasContext() {
+      return this.canvasElement ? this.canvasElement.getContext('2d') : null;
+    },
 
-        this.draw();
+    registerCanvasElement(element) {
+      this.canvasElement = element;
     },
 
     onPenStyleChange: observer('color', 'weight', function () {
-        this.get('canvasContext').strokeStyle = this.get('color');
-        this.get('canvasContext').lineWidth = this.get('weight');
+        this.canvasContext.strokeStyle = this.get('color');
+        this.canvasContext.lineWidth = this.get('weight');
     }),
 
     savePenStroke(isNewStroke) {
@@ -55,10 +47,10 @@ export default Component.extend({
     penDown(event) {
         this.set('penstate', true);
         this.set('pos', this.newEvent(event).penPosition());
-        this.get('canvasContext').strokeStyle = this.get('color');
-        this.get('canvasContext').lineWidth = this.get('weight');
-        this.get('canvasContext').beginPath();
-        this.get('canvasContext').moveTo(this.pos.x, this.pos.y);
+        this.canvasContext.strokeStyle = this.get('color');
+        this.canvasContext.lineWidth = this.get('weight');
+        this.canvasContext.beginPath();
+        this.canvasContext.moveTo(this.pos.x, this.pos.y);
         this.savePenStroke(this.get('newStroke'));
         return false; // return false to prevent IE selecting the image
     },
@@ -67,11 +59,11 @@ export default Component.extend({
         var newPos = this.newEvent(event).penPosition();
         if (this.get('penstate')) {
             this.set('pos', newPos);
-            this.get('canvasContext').lineTo(newPos.x, newPos.y);
-            this.get('canvasContext').stroke();
+            this.canvasContext.lineTo(newPos.x, newPos.y);
+            this.canvasContext.stroke();
             this.savePenStroke(this.get('continueStroke'));
         } else {
-            this.get('canvasContext').moveTo(newPos.x, newPos.y);
+            this.canvasContext.moveTo(newPos.x, newPos.y);
         }
         return false;
     },
@@ -82,7 +74,7 @@ export default Component.extend({
     },
 
     newEvent(event) {
-        var signaturePad = this.element.querySelector('canvas');
+        var signaturePad = this.canvasElement;
 
         return {
             crossPlatform: function () {
@@ -110,21 +102,21 @@ export default Component.extend({
         if (isPresent(this.get('value'))) {
             this.get('value').forEach((point) => {
                 if (point[0] === 1) {
-                    this.get('canvasContext').strokeStyle = point[3];
-                    this.get('canvasContext').lineWidth = point[4];
-                    this.get('canvasContext').beginPath();
-                    this.get('canvasContext').moveTo(point[1], point[2]);
+                    this.canvasContext.strokeStyle = point[3];
+                    this.canvasContext.lineWidth = point[4];
+                    this.canvasContext.beginPath();
+                    this.canvasContext.moveTo(point[1], point[2]);
                 } else {
-                    this.get('canvasContext').lineTo(point[1], point[2]);
-                    this.get('canvasContext').stroke();
+                    this.canvasContext.lineTo(point[1], point[2]);
+                    this.canvasContext.stroke();
                 }
             });
         }
     },
 
     valueObserver: observer('value', function () {
-        if (this.element) {
-            this.get('canvasContext').clearRect(0, 0, this.get('width'), this.get('height'));
+        if (this.canvasElement) {
+            this.canvasContext.clearRect(0, 0, this.get('width'), this.get('height'));
             this.draw();
         }
     }),
