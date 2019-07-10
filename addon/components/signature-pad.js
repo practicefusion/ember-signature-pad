@@ -13,7 +13,9 @@ export default Component.extend({
         return A();
     }),
 
+    canvasContext: null,
     canvasElement: null,
+
     penstate: false,  // is the pen down?
     pos: null,   // {x: int, y: int} last pen position
 
@@ -22,12 +24,9 @@ export default Component.extend({
 
     tagName: '',
 
-    get canvasContext() {
-      return this.canvasElement ? this.canvasElement.getContext('2d') : null;
-    },
-
     registerCanvasElement(element) {
       this.canvasElement = element;
+      this.canvasContext = element.getContext('2d');
     },
 
     onPenStyleChange: observer('color', 'weight', function () {
@@ -115,7 +114,7 @@ export default Component.extend({
     },
 
     valueObserver: observer('value', function () {
-        if (this.canvasElement) {
+        if (this.canvasContext) {
             this.canvasContext.clearRect(0, 0, this.get('width'), this.get('height'));
             this.draw();
         }
