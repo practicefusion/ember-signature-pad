@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parserOptions: {
-    ecmaVersion: 2017,
+    ecmaVersion: 2018,
     sourceType: 'module'
   },
   plugins: [
@@ -15,11 +15,13 @@ module.exports = {
     browser: true
   },
   rules: {
+    'ember/no-observers': 'warn',
   },
   overrides: [
     // node files
     {
       files: [
+        '.eslintrc.js',
         '.template-lintrc.js',
         'ember-cli-build.js',
         'index.js',
