@@ -1,1 +1,15 @@
-<canvas width={{width}} height={{height}} />
+<canvas
+  height={{this.height}}
+  width={{this.width}}
+
+  ...attributes
+
+  {{on "mousedown" (action this.penDown)}}
+  {{on "touchstart" (action this.penDown)}}
+
+  {{on "mousemove" (action this.penMove)}}
+  {{on "touchmove" (action this.penMove)}}
+
+  {{on "mouseup" (action this.penUp)}}
+  {{on "touchend" (action this.penUp)}}
+/>
