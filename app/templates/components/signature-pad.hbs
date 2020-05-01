@@ -4,6 +4,9 @@
 
   ...attributes
 
+  {{did-insert (action this.registerCanvasElement)}}
+  {{did-insert (action this.draw)}}
+
   {{on "mousedown" (action this.penDown)}}
   {{on "touchstart" (action this.penDown)}}
 
